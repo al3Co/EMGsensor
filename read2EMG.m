@@ -11,7 +11,8 @@ T = 100;        % number of samples to view on plot
 nCount = 1;
 voltageS1 = zeros(T,1);
 voltageS2 = zeros(T,1);
-%FEK = zeros(T,1);
+avrgVolt = zeros(T,1);
+FEK = zeros(T,1);
 %sample = [];
 
 %% Getting data
@@ -25,32 +26,31 @@ while double(get(gcf,'CurrentCharacter'))~=27
     if nCount == T
         voltageS1 = voltageS1(2:end, :);
         voltageS2 = voltageS2(2:end, :);
-        %FEK = FEK(2:end, :);
+        avrgVolt = avrgVolt(2:end, :);
+        FEK = FEK(2:end, :);
     else
         nCount = nCount + 1;
     end
-    voltageS1(nCount,:) = readVoltage(a, 'A0'); % Sensor 1 connected to input A0. Already converted to 0-5V
-    voltageS2(nCount,:) = readVoltage(a, 'A1'); % Sensor 2 connected to input A1. Already converted to 0-5V
-    %FEK(nCount,:) = kalman_voltage(voltageS1);
+    voltageS1(nCount,:) = readVoltage(a, 'A0'); % Sensor 1 connected to input A0 biceps brachii.
+    voltageS2(nCount,:) = readVoltage(a, 'A1'); % Sensor 2 connected to input A1 triceps brachii.
+    %avrgVolt(nCount,:) = ((voltageS1(nCount,:)/5)-(voltageS2(nCount,:)/5));
+    avrgVolt(nCount,:) = ((voltageS1(nCount,:))-(voltageS2(nCount,:)));
+    FEK(nCount,:) = kalman_voltage(avrgVolt);
     
-    dataPlot = [voltageS1, voltageS2];
+    data = [voltageS1(nCount,:), voltageS2(nCount,:)];
+    decision = funcMyoDecision(data);
+    
+    dataPlot = [voltageS1, voltageS2, avrgVolt, FEK];
     plot(1:T,dataPlot)
-    title(sprintf('Voltage S1 = %fV S2 = %fV', (voltageS1(nCount)), (voltageS2(nCount))))
+    title(sprintf('A0 = %fV A1 = %fV Avg = %f FEK= %f', (voltageS1(nCount)), (voltageS2(nCount)) , avrgVolt(nCount,:), FEK(nCount,:)))
     grid on;
-    axis([0 T 0 5])
+    axis([0 T -5 5])
     xlabel('Samples') % x-axis label
     ylabel('Voltage') % y-axis label
-    %legend('UP','DWN')
     drawnow
 end
+
+%% Disconnecting
 writeDigitalPin(a, 'D13', 0);
-%% Saving on file
-% fileID = fopen('muscle_firstTest.txt','w');
-% fprintf(fileID,'%10s %10s\r\n','Stamp','Data');
-% fprintf(fileID,'%10.2f %10.4f\r\n',nCount, voltage(nCount));
-% fclose(fileID);
-
-%% Plotting all saved data
-% TODO
-
+clear a
 disp('End')
