@@ -37,8 +37,8 @@ while double(get(gcf,'CurrentCharacter'))~=27
     avrgVolt(nCount,:) = ((voltageS1(nCount,:))-(voltageS2(nCount,:)));
     FEK(nCount,:) = kalman_voltage(avrgVolt);
     
-    data = [voltageS1(nCount,:), voltageS2(nCount,:)];
-    decision = funcMyoDecision(data);
+    voltages = [voltageS1(nCount,:), voltageS2(nCount,:)];
+    decision = funcMyoDecision(voltages);
     
     dataPlot = [voltageS1, voltageS2, avrgVolt, FEK];
     plot(1:T,dataPlot)
