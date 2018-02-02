@@ -2,10 +2,10 @@ close all
 clear
 clc
 %% Connection
-a = arduino('COM3', 'uno');
+a = arduino('COM5', 'uno');
 
 %%Parameters
-T = 10;        % number of samples to view on plot
+T = 100;        % number of samples to view on plot
 nCount = 1;
 voltage = zeros(T,1);
 FEK = zeros(T,1);
@@ -50,5 +50,5 @@ writeDigitalPin(a, 'D13', 0);
 
 %% Plotting all data
 % TODO
-
+%clear a
 disp('End')
