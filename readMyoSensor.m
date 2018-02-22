@@ -2,7 +2,7 @@ close all
 clear
 clc
 %% Connection
-a = arduino('COM5', 'uno');
+a = arduino('COM6', 'uno');
 
 %%Parameters
 T = 100;        % number of samples to view on plot
@@ -30,7 +30,7 @@ while double(get(gcf,'CurrentCharacter'))~=27
     voltage(nCount,:) = readVoltage(a, 'A0'); %Already converted to 0-5V
     FEK(nCount,:) = kalman_voltage(voltage);
     
-    dataPlot = [voltage, FEK];
+    dataPlot = [voltage];
     plot(1:T,dataPlot)
     title(sprintf('Voltage = %fV', (voltage(nCount))))
     grid on;
